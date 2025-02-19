@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{client.first_name}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+        }
+
+        .section h3 {
+            margin-top: 0;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, <span id="client-name">{{client.first_name}}</span></h2>
+        
+        <div class="section">
+            <h3>Client Information</h3>
+            <p><strong>Name:</strong> <span id="client-fullname">{{client.first_name}} {{client.last_name}}</span></p>
+            <p><strong>Contact:</strong> <span id="client-contact">{{client.contact}}</span></p>
+            <p><strong>Email:</strong> <span id="client-email">{{client.email}}</span></p>
+            <p><strong>Gender:</strong> <span id="client-gender">{{client.gender}}</span></p>
+            <p><strong>ID Number:</strong> <span id="client-id">{{client.id_no}}</span></p>
+        </div>
+        
+        <div class="section">
+            <h3>Book a Room</h3>
+            <form>
+                <label for="room-type">Room Type:</label>
+                <select id="room-type" required>
+                    <option value="single">Single</option>
+                    <option value="double">Double</option>
+                    <option value="suite">Suite</option>
+                </select>
+                <label for="check-in">Check-in Date:</label>
+                <input type="date" id="check-in" required>
+                <label for="check-out">Check-out Date:</label>
+                <input type="date" id="check-out" required>
+                <button type="submit">Book Now</button>
+            </form>
+        </div>
+        
+        <div class="section">
+            <h3>Order Food</h3>
+            <form>
+                <label for="food">Select Food Item:</label>
+                <select id="food" required>
+                    <option value="pizza">Pizza</option>
+                    <option value="burger">Burger</option>
+                    <option value="pasta">Pasta</option>
+                    <option value="salad">Salad</option>
+                </select>
+                <button type="submit">Order Now</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -121,7 +121,7 @@ class Payment(models.Model):
 
 class Account:
     def __init__(self) -> None:
-        self.user:str = 'NULL'
+        self.user:int = 0
     
     def Auth(self, email, password):
         if '@staff' in str(email):
