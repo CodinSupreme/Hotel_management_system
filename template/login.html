@@ -71,6 +71,10 @@
     <div class="login-container">
         <h2>Login</h2>
         <form method="POST" action="login">
+            {%if message.msgbool == 1 %}
+            <p style="color: red;">Error! Invalid Credentials</p>
+            {% endif %}
+
             {% csrf_token %}
             <input name="email" type="email" placeholder="Email" required>
             <input name="password" type="password" placeholder="Password" required>

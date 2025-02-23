@@ -47,6 +47,10 @@
 
         button:hover {
             background-color: #218838;
+        
+        #Form{
+            opacity: 0.7;
+        }
         }
     </style>
 </head>
@@ -54,7 +58,10 @@
     <div class="signup-container">
         <h2>Sign Up</h2>
         
-        <form method="POST" action="register">
+        <form id="Form" method="POST" action="register">
+            {%if message.msgbool == 1 %}
+            <p style="color: red;">Error! The account already Exists</p>
+            {% endif %}
             {%csrf_token%}
             <input name="f_name" type="text" placeholder="First Name" required>
             <input name="l_name" type="text" placeholder="Last Name" required>

@@ -1,4 +1,5 @@
 import sqlite3 as sql
+import datetime as dt
 location= r"C:\Users\Owner\Documents\coding\hotel_management_system\Database\test\Hotel_management_database.db"
 
 def Create_tables():
@@ -101,7 +102,6 @@ def Create_tables():
     connector.commit()
     connector.close()
 
-
 def insert_client(x:list):
      connector = sql.Connection(location)
      cursor = connector.cursor()
@@ -137,8 +137,12 @@ def insert_Room(x:list):
      connector.commit()
      connector.close()
 
-Create_tables()
-     
-        
+def update():
+     conn = sql.connect(r"C:\Users\Owner\Documents\coding\hotel_management_system\Database\Hotel_management_database.db")
+     cur = conn.cursor()
+     cur.execute("ALTER TABLE Inventory ADD COLUMN service_time VARCHAR(20) ")     
+     conn.commit()
+     conn.close()   
 
 
+insert_staff([1241,'Tiffany', 'bradly', 754215422, 13231, 'tiffanyb@gmail.com', 'receptionist', 20000, dt.datetime.strptime('2025-02-21', '%Y-%m-%d'), dt.datetime.strptime('07:00:00', '%H:%M:%S'), dt.datetime.strptime('12:00:00', '%H:%M:%S'), 'Female', 'Tiffany123'])

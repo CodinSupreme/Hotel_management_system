@@ -39,6 +39,7 @@ class Inventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
     item_name = models.CharField(blank=True, null=True, max_length=200)
     category = models.CharField(blank=True, null=True, max_length=200)
+    service_time = models.CharField(blank=True, null=True, max_length=20)
     item_description = models.TextField(blank=True, null=True, max_length=200)
     quantity = models.IntegerField(blank=True, null=True)
     price_per_unit = models.FloatField(blank=True, null=True, max_length=200)
@@ -92,6 +93,7 @@ class Staff(models.Model):
     id_no = models.IntegerField(unique=True)
     email = models.CharField(blank=True, null=True, max_length=200)
     role = models.CharField(blank=True, null=True, max_length=200)
+    service_id = models.IntegerField(blank=True, null=True)
     salary = models.IntegerField()
     date_of_joining = models.DateField( max_length=200)
     shift_start = models.TimeField( max_length=200)
@@ -170,3 +172,6 @@ class Account:
 
     def Book_service(self):
         pass
+
+    def service_request(self):
+        service = list(Service.objects.filter(service_id=self.user).values())
