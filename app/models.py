@@ -8,8 +8,8 @@ class Booking(models.Model):
     booking_id = models.AutoField(primary_key=True)
     client_id = models.IntegerField(blank=True, null=True)
     room_id = models.IntegerField(blank=True, null=True)
-    check_in_date = models.DateField( max_length=200)
-    check_out_date = models.DateField( max_length=200)
+    check_in_date = models.TextField(blank=True, null=True, max_length=10)
+    check_out_date = models.TextField(blank=True, null=True, max_length=10)
     number_of_guests = models.IntegerField(blank=True, null=True)
     total_price = models.FloatField(blank=True, null=True, max_length=200)
     booking_status = models.TextField( max_length=200)
@@ -39,7 +39,7 @@ class Inventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
     item_name = models.CharField(blank=True, null=True, max_length=200)
     category = models.CharField(blank=True, null=True, max_length=200)
-    service_time = models.CharField(blank=True, null=True, max_length=20)
+    service_time = models.TextField(blank=True, null=True, max_length=20)
     item_description = models.TextField(blank=True, null=True, max_length=200)
     quantity = models.IntegerField(blank=True, null=True)
     price_per_unit = models.FloatField(blank=True, null=True, max_length=200)
@@ -77,7 +77,8 @@ class ServiceRequest(models.Model):
     request_id = models.AutoField(primary_key=True)
     booking_id = models.IntegerField(blank=True, null=True)
     service_id = models.IntegerField(blank=True, null=True)
-    request_date = models.DateField(blank=True, null=True, max_length=200)
+    request_time = models.TextField(blank=True, null=True, max_length=10)
+    request_date = models.TextField(blank=True, null=True, max_length=10)
     request_status = models.TextField()
 
     class Meta:
@@ -112,7 +113,8 @@ class Payment(models.Model):
     booking_id = models.IntegerField(blank=True, null=True)
     service_id = models.IntegerField(blank=True, null=True)
     amount = models.FloatField(blank=True, null=True, max_length=200)
-    payment_date = models.DateField(blank=True, null=True, max_length=200)
+    payment_time = models.TextField(blank=True, null=True, max_length=10)
+    payment_date = models.TextField(blank=True, null=True, max_length=10)
     payment_mode = models.TextField( max_length=200)
     account = models.IntegerField()
     payment_status = models.TextField( max_length=200)
@@ -126,7 +128,7 @@ class Account:
         self.user:int = 0
     
     def Auth(self, email, password):
-        if '@staff' in str(email):
+        if '@havenhub' in str(email):
             if Staff.objects.filter(email=email).exists():
                 if Staff.objects.filter(password=password).exists():
                     return True
@@ -143,14 +145,24 @@ class Account:
             length = len(list(Client.objects.values()))
             client_id = 3214 + length
 
-            code = random.randrange(1000, 9999)
+            code = random.randrange(2000, 9999)
             while Client.objects.filter(code = code).exists():
-                code = random.randrange(1000, 9999)
+                code = random.randrange(2000, 9999)
 
             client = Client(client_id = client_id, first_name = f_name, last_name = l_name, contact = contact, id_no = id_no, email = email, gender = gender, password = password, code = code)
             client.save()
             return True
         return False
+
+    def Forgot_Password(self, code, new_pass):
+        if str(code)[0] == "1":
+            data=Staff.objects.filter(code=code)
+            print(list(data))
+            data.update(password=new_pass)
+        else:
+            data=Client.objects.filter(code=code)
+            print(list(data))
+            data.update(password=new_pass)
 
     def Book_room(self, client_id, room_id, check_in_date, check_out_date, no_guest, price):
         length = len(list(Booking.objects.values()))
@@ -170,8 +182,21 @@ class Account:
 
         book.update(booking_status='complete')
 
-    def Book_service(self):
-        pass
+    def Book_service(self, service_id, booking_id = None, request_date=dt.date.today()):
+        length = len(list(ServiceRequest.objects.values()))
+        request_id = 5003 + length
+        service = ServiceRequest(request_id=request_id, booking_id=booking_id, request_date=request_date)
+        service.save()
 
-    def service_request(self):
-        service = list(Service.objects.filter(service_id=self.user).values())
+    def Staff_data(self):
+        staff:dict = list(Staff.objects.filter(staff_id=self.user).values())[0]
+        service_id = staff['service_id']
+
+        services:dict = list(ServiceRequest.objects.filter(service_id=service_id).values())
+        if len(services) != 0:
+            for service in services:
+                additions:dict = list(ServiceRequest.objects.filter(service_id=service_id))[0]
+                service.update(additions) 
+
+        print(services)
+        return {'staff':staff, 'service':services}

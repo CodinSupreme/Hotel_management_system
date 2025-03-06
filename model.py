@@ -13,8 +13,8 @@ class Booking(models.Model):
     booking_id = models.AutoField(primary_key=True)
     client_id = models.IntegerField(blank=True, null=True)
     room_id = models.IntegerField(blank=True, null=True)
-    check_in_date = models.DateField()
-    check_out_date = models.DateField()
+    check_in_date = models.TextField(blank=True, null=True)
+    check_out_date = models.TextField(blank=True, null=True)
     number_of_guests = models.IntegerField(blank=True, null=True)
     total_price = models.FloatField(blank=True, null=True)
     booking_status = models.TextField()
@@ -46,10 +46,10 @@ class Inventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
     item_name = models.CharField(blank=True, null=True)
     category = models.CharField(blank=True, null=True)
+    service_time = models.TextField(blank=True, null=True)
     item_description = models.TextField(blank=True, null=True)
     quantity = models.IntegerField(blank=True, null=True)
     price_per_unit = models.FloatField(blank=True, null=True)
-    service_time = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -87,7 +87,8 @@ class ServiceRequest(models.Model):
     request_id = models.AutoField(primary_key=True)
     booking_id = models.IntegerField(blank=True, null=True)
     service_id = models.IntegerField(blank=True, null=True)
-    request_date = models.DateField(blank=True, null=True)
+    request_time = models.TextField(blank=True, null=True)
+    request_date = models.TextField(blank=True, null=True)
     request_status = models.TextField()
 
     class Meta:
@@ -111,7 +112,6 @@ class Staff(models.Model):
     gender = models.TextField()  # This field type is a guess.
     password = models.CharField(blank=True, null=True)
     code = models.IntegerField(unique=True)
-    service_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -234,7 +234,8 @@ class Payment(models.Model):
     booking_id = models.IntegerField(blank=True, null=True)
     service_id = models.IntegerField(blank=True, null=True)
     amount = models.FloatField(blank=True, null=True)
-    payment_date = models.DateField(blank=True, null=True)
+    payment_time = models.TextField(blank=True, null=True)
+    payment_date = models.TextField(blank=True, null=True)
     payment_mode = models.TextField()
     account = models.IntegerField()
     payment_status = models.TextField()

@@ -7,4 +7,5 @@ urlpatterns = [
     path('login', views.Login, name='login'),
     path('staff', views.Staff_fun, name='staff'),
     path('client', views.Client_fun, name='client'),
+    path('forgot_pass', views.Forgot_password, name='forgot_password')
 ]

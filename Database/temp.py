@@ -1,6 +1,10 @@
 import sqlite3 as sql
 import datetime as dt
+import pandas as pd
+import random
+import math
 location= r"C:\Users\Owner\Documents\coding\hotel_management_system\Database\test\Hotel_management_database.db"
+dataloc = r"C:\Users\Owner\Desktop\hotel_management_system.xlsx"
 
 def Create_tables():
     connector = sql.Connection(location)
@@ -30,12 +34,13 @@ def Create_tables():
                         email VARCHAR(100),
                         role VARCHAR(30),
                         salary INTEGER NOT NULL,
-                        date_of_joining DATE NOT NULL,
-                        shift_start TIME NOT NULL,
-                        shift_end TIME NOT NULL,
-                        gender NOT NULL CHECK(gender IN ('Male', 'Female', 'Other')),
+                        date_of_joining TEXT NOT NULL,
+                        shift_start TEXT NOT NULL,
+                        shift_end TEXT NOT NULL,
+                        gender TEXT NOT NULL CHECK(gender IN ('Male', 'Female', 'Other')),
                         password VARCHAR(20),
-                        code INTEGER UNIQUE NOT NULL 
+                        code INTEGER UNIQUE NOT NULL, 
+                        service_id INTEGER NOT NULL
                 )""")
 
     cursor.execute("""CREATE TABLE Inventory(
@@ -43,6 +48,7 @@ def Create_tables():
                         inventory_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
                         item_name VARCHAR(60),
                         category VARCHAR(20),
+                        service_time TEXT,
                         item_description TEXT,
                         quantity INTEGER DEFAULT 0,
                         price_per_unit REAL DEFAULT 0.00
@@ -63,8 +69,8 @@ def Create_tables():
                         booking_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
                         client_id INTEGER,
                         room_id INTEGER,
-                        check_in_date DATE NOT NULL,
-                        check_out_date DATE NOT NULL,
+                        check_in_date TEXT DEFAULT (date('now')),
+                        check_out_date TEXT,
                         number_of_guests INTEGER DEFAULT 1,
                         total_price REAL,
                         booking_status TEXT NOT NULL DEFAULT 'pending' CHECK(booking_status IN ('pending', 'active', 'complete'))     
@@ -83,7 +89,8 @@ def Create_tables():
                         request_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
                         booking_id INTEGER,
                         service_id INTEGER,
-                        request_date DATE,
+                        request_time TEXT DEFAULT (time('now')),
+                        request_date TEXT DEFAULT (date('now')),
                         request_status TEXT NOT NULL DEFAULT 'pending' CHECK(request_status IN ('pending', 'active'))
                 )""")
 
@@ -93,7 +100,8 @@ def Create_tables():
                         booking_id INTEGER,
                         service_id INTEGER,
                         amount REAL,
-                        payment_date DATE,
+                        payment_time TEXT DEFAULT (time('now')),
+                        payment_date TEXT DEFAULT (date('now')),
                         payment_mode TEXT NOT NULL DEFAULT 'M-pesa' CHECK(payment_mode IN ('M-pesa', 'Bank')),
                         account INTEGER NOT NULL,
                         payment_status TEXT NOT NULL DEFAULT 'not paid' CHECK(payment_status IN ('not paid', 'pending', 'paid'))
@@ -102,17 +110,11 @@ def Create_tables():
     connector.commit()
     connector.close()
 
-def insert_client(x:list):
-     connector = sql.Connection(location)
-     cursor = connector.cursor()
-     cursor.executemany("INSERT INTO client(client_id, first_name, last_name, contact, id_no, email, gender, password) VALUES(?, ?, ?,?,?,?,?,?)", x)
-     connector.commit()
-     connector.close()
 
 def insert_staff(x:list):
      connector = sql.Connection(location)
      cursor = connector.cursor()
-     cursor.executemany("INSERT INTO staff(staff_id, first_name, last_name, contact, id_no, email, role, salary, date_of_joining, shift_start, shift_end, gender, password) VALUES(?, ?, ?,?,?,?,?,?,?,?,?,?,?)", x)
+     cursor.executemany("INSERT INTO staff(staff_id, first_name, last_name, contact, id_no, email, role, salary, date_of_joining, shift_start, shift_end, gender, password,code, service_id) VALUES(?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?)", x)
      connector.commit()
      connector.close()
 
@@ -140,9 +142,102 @@ def insert_Room(x:list):
 def update():
      conn = sql.connect(r"C:\Users\Owner\Documents\coding\hotel_management_system\Database\Hotel_management_database.db")
      cur = conn.cursor()
-     cur.execute("ALTER TABLE Inventory ADD COLUMN service_time VARCHAR(20) ")     
+     cur.execute("ALTER TABLE Service_request ADD COLUMN service_time TEXT DEFAULT (time('now'))")     
      conn.commit()
      conn.close()   
 
+def DataCreator():
+     data = pd.read_excel(dataloc, sheet_name='staff', header=0)
+     contacts = list(data['contact'])
 
-insert_staff([1241,'Tiffany', 'bradly', 754215422, 13231, 'tiffanyb@gmail.com', 'receptionist', 20000, dt.datetime.strptime('2025-02-21', '%Y-%m-%d'), dt.datetime.strptime('07:00:00', '%H:%M:%S'), dt.datetime.strptime('12:00:00', '%H:%M:%S'), 'Female', 'Tiffany123'])
+     def random_gen(dataset, length, initial=''):
+          temp = []
+
+          for data in dataset:
+               run = True
+               while run:
+                    number = initial
+                    for i in range(length):
+                         number += str(random.randrange(0, 9))
+                    
+                    number = int(number)
+                    if number not in temp:
+                         temp.append(number)
+                         run = False
+          return temp
+
+     def Password_generator(length):
+          temp = []
+          for i in range(length):
+               paslen = random.randrange(5, 10)
+               password = ''
+               for j in range(paslen):
+                    password += random.choice('1234567890!@#$%^&*QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm,.?')
+               temp.append(password)
+          
+          return temp
+
+     contacts = random_gen(contacts, 8, '7')
+     id_no = random_gen(list(data["id_number"]), 6)
+     password = Password_generator(len(contacts))
+
+     data["contact"] = contacts
+     data["id_number"] = id_no
+     data['password'] = password
+
+     data.to_excel(dataloc, 'staff', index=False)
+
+
+data =[
+     [1241,'Blake',	'Kimani',	786235516, 628336, 'blakek123@havenhub.com',	'General Manager',100000,'2018-03-07','08:00:00','17:00:00','Male','G%6IRt',1234,4001],
+     [1242,'Esther','Mosyoka',722660576	,126350,'esthermosyoka123@havenhub.com','Assistant Manager',90000,'2018-03-07','08:00:00','17:00:00','Female',',68nd',1975,4002],
+     [1243,'Taylor','Nyambura',710664144,80184,'taylorn345@havenhub.com','Financial Manager',80000,'2018-03-08','08:00:00','17:00:00','Female','X8u%m$G',1545,4003],
+     [1244,'Jordan','Kipchoge',728061354,51848,'jkipchoge@havenhub.com','Sales & Marketing Manager',40000,'2018-03-09','07:00:00','18:00:00','Male','0b9x.',1865,4004],
+     [1245,'Mike','Onyango',777620548,756518,'mikeonyango@havenhub.com','IT Manager',40000,'2020-01-11','08:00:00','17:00:00','Male','xp5e9nRM',1743,4005],
+     [1246,'Tiffany','Bradly',771174272,835452,'tiffanyb@havenhub.com','Receptionist',20000,'2024-07-12','06:00:00','18:00:00','Female','zOzkhG',1364,4006],
+     [1247,'Jamie','Otieno',734061660,418176,'jamieotieno1@havenhub.com','Night Auditor',20000,'2024-02-14','18:00:00','06:00:00','Male','p2vRdllZP',1732,4008],
+     [1248,'Casey','Wangari',762071311,446656,'caseyw453@havenhub.com','Front Desk Manager',20000,'2024-01-13','06:00:00','18:00:00','Female','ZM.kns^q',1084,4007],
+     [1249,'Riley','Musili',771207876,360754,'rileym@havenhub.com','Housekeeper',12000,'2023-07-15','06:00:00','05:00:00','Female','x1x8$',1542,4009],
+     [1250,'Dakota','Donz',716845713,58114,'dakota123@havenhub.com','Electrician & Plumber',20000,'2022-04-16','08:00:00','17:00:00','Male','siDOK8T',1011,4011],
+     [1251,'Quinn','Obuor',782628360,36420,'qobuor2@havenhub.com','Laundry Attendant',12000,'2024-04-29','06:00:00','17:00:00','Female','Y@7db&*u',1208,4017],
+     [1252,'Logan','Hanz',743150318,177170,'loganhanz@havenhub.com','Maintenance Technician',20000,'2020-07-12','07:00:00','17:00:00','Male','2cYWJ',1376,4011],
+     [1253,'Morgan','Wainana',722301847,601887,'wainanam@havenhub.com','Chef',15000,'2019-07-19','07:00:00','17:00:00','Male','eWDmpze',1832,4010],
+     [1254,'Charlie','Banet',701252664,503306,'charlieb345@havenhub.com','Waiter',10000,'2024-04-20','07:00:00','17:00:00','Male','!bpz$wN',1811,4010],
+     [1255,'Hailey','Anyango',726680276,527501,'haileyan123@havenhub.com','Waitress',10000,'2024-05-21','07:00:00','17:00:00','Female','8hMb^',1200,4010],
+     [1256,'Rose','Wanjiru',752172803,765128,'rose253@havenhub.com','waitress',10000,'2024-03-01','07:00:00','17:00:00','Female','c0Uhisj',1111,4010],
+     [1257,'Michael','Harris',765417400,28232,'michaelh5@havenhub.com','Bartender',12000,'2019-07-23','07:00:00','17:00:00','Male','fW,PbE7',1762,4010],
+     [1258,'Martin','Obonye',723780861,741402,'martin2453@havenhub.com','Restaurant Manager',33000,'2019-07-24','06:00:00','17:00:00','Male','RVpJI',1611,4012],
+     [1259,'Janet','Ciku',707518036,437278,'janetk32@havenhub.com','Room Service Attendant',12000,'2024-01-25','07:00:00','17:00:00','Female','wR^o6w',1621,4017],
+     [1260,'Bob','Koinange',768682520,148633,'bobK123@havenhub.com','Security Guard',10000,'2023-05-16','06:00:00','18:00:00','Male','qFS5CDw#f',1099,4013],
+     [1261,'Jimmy','Kipchebet',712258370,776023,'JimmyK@havenhub.com','Security Guard',10000,'2023-07-16','18:00:00','06:00:00','Male','tSJeq',1777,4013],
+     [1262,'Morris','Nganga',747145265,586263,'morisn3433@havenhub.com','Parking Attendant',10000,'2024-07-27','06:00:00','17:00:00','Male','$L.&2D',1321,4014],
+     [1263,'Alex','Otieno',755708724,721576,'otienoalex@havenhub.com','Event Coordinator',33000,'2022-07-08','07:00:00','17:00:00','Male','T0M$!az8',1098,4018],
+     [1264,'Janet','Atieno',764341422,248600,'janeta322@havenhub.com','Spa & Wellness Staff',20000,'2023-03-29','08:00:00','17:00:00','Female','Fj4%l8',1671,4015],
+     [1265,'Teddy','Morris',780603163,25010,'teddym@havenhub.com','Facilities Manager',40000,'2020-07-30','08:00:00','17:00:00','Male','.NsTgs*01',1921,4016]
+       ]
+
+services = [
+     [4001,'General Management','Oversees all hotel operations, budgeting and staff management',0],
+     [4002,'Management Assistance','Supports the general manager, handles daily operations',0],
+     [4003,'Finance Management','Manages, hotel accounts, budgeting, financial reporting',0],
+     [4004,'Sales & Marketing Management','Promotes the hotel, manages bookings, creates advertisements',0],
+     [4005,'IT Management','Maintains hotel management software, WIFI, security system',0],
+     [4006,'Guest reception','Handle reservation for',50],
+     [4007,'Desk Operations','Handle reservation for',100],
+     [4008,'Night Shift Desk Operations','Handle reservation for',100],
+     [4009,'House service','perform house service for room',50],
+     [4010,'food & beverage service','perform food & beverage service to',60],
+     [4011,'Maintenance Service','Perform Maintainance service to hotel',50],
+     [4012,'Restaurant Management','Manage restaurant activities',0],
+     [4013,'Security','Protect people and hotel utilites',50	],
+     [4014,'Car Parking service','Direct cars to available parking space',40],
+     [4015,'Spa & Wellness service','Perform massage to clients',100],
+     [4016,'Hotel Facility management','Ensure all hotel facilites are in place',0],
+     [4017,'Room service','Perform room service for room',100],
+     [4018,'Event Coordinator','Coordinate events in the hotel',400]
+     
+]
+
+#insert_service(services)
+#Create_tables()
+#insert_staff(data)

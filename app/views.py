@@ -39,11 +39,19 @@ def Login(request):
     else:
         return render(request, 'Login.HTML', {'message': {'msgbool': 0}})
 
+#function loads the forgot password page
+def Forgot_password(request):
+    if request.POST:
+        code = request.POST['code']
+        password = request.POST['password']
+        User.Forgot_Password(code, password)
+        return redirect('login')
+    else:
+        return render(request, 'forgot_pass.html')
 #function loads the staff page
 def Staff_fun(request):
-    staff = list(Staff.objects.filter(staff_id=User.user).values())[0]
-    service = list(Service.objects.filter(service_id=User.user).values())
-    return render(request, 'staff.html', {'staff':staff, 'services':service})
+    content = User.Staff_data()
+    return render(request, 'staff.html', content)
 
 #function loads the client page
 def Client_fun(request):

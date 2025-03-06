@@ -59,7 +59,7 @@
             <h3>Personal Information</h3>
             <p><strong>First Name:</strong> <span id="staff-firstname">{{staff.first_name}}</span></p>
             <p><strong>Last Name:</strong> <span id="staff-lastname">{{staff.last_name}}</span></p>
-            <p><strong>Contact:</strong> <span id="staff-contact">{{staff.contact}}</span></p>
+            <p><strong>Contact:</strong> <span id="staff-contact">+254 {{staff.contact}}</span></p>
             <p><strong>Email:</strong> <span id="staff-email">{{staff.email}}</span></p>
             <p><strong>ID Number:</strong> <span id="staff-id">{{staff.id_no}}</span></p>
             <p><strong>Gender:</strong> <span id="staff-gender">{{staff.gender}}</span></p>
@@ -68,8 +68,8 @@
         <div class="section">
             <h3>Job Details</h3>
             <p><strong>Role:</strong> <span id="staff-role">{{staff.role}}</span></p>
-            <p><strong>Salary:</strong> <span id="staff-salary">${{staff.salary}}</span></p>
-            <p><strong>Day of Joining:</strong> <span id="staff-joining">{{staff.day_of_joining}}</span></p>
+            <p><strong>Salary:</strong> <span id="staff-salary">Ksh {{staff.salary}}</span></p>
+            <p><strong>Day of Joining:</strong> <span id="staff-joining">{{staff.date_of_joining}}</span></p>
             <p><strong>Shift Start:</strong> <span id="staff-shift-start">{{staff.shift_start}}</span></p>
             <p><strong>Shift End:</strong> <span id="staff-shift-end">{{staff.shift_end}}</span></p>
         </div>
@@ -78,7 +78,7 @@
             <h3>Service Requests</h3>
             {% for service in services %}
             <div class="service">
-                <p>{{service.service_description}} for {{}}</p>
+                <p>{{service.service_description}} </p>
             </div>
             {% endfor %}
         </div>
