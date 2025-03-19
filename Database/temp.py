@@ -3,7 +3,7 @@ import datetime as dt
 import pandas as pd
 import random
 import math
-location= r"C:\Users\Owner\Documents\coding\hotel_management_system\Database\test\Hotel_management_database.db"
+location= r"C:\Users\Owner\Documents\coding\hotel_management_system\Database\Hotel_management_database.db"
 dataloc = r"C:\Users\Owner\Desktop\hotel_management_system.xlsx"
 
 def Create_tables():
@@ -121,7 +121,7 @@ def insert_staff(x:list):
 def insert_invent(x:list):
      connector = sql.Connection(location)
      cursor = connector.cursor()
-     cursor.executemany("INSERT INTO inventory(inventory_id, item_name, category, item_description, quantity, price_per_unit) VALUES(?, ?, ?,?,?,?)", x)
+     cursor.executemany("INSERT INTO inventory(inventory_id, item_name, category,service_time, item_description, quantity, price_per_unit) VALUES(?,?, ?, ?,?,?,?)", x)
      connector.commit()
      connector.close()
 
@@ -135,7 +135,7 @@ def insert_service(x:list):
 def insert_Room(x:list):
      connector = sql.Connection(location)
      cursor = connector.cursor()
-     cursor.executemany("INSERT INTO Service(room_id, room_type, bed_type, price_per_night, availability_status, max_occupation) VALUES(?, ?, ?,?,?,?)", x)
+     cursor.executemany("INSERT INTO Room(room_id, room_type, bed_type, price_per_night, availabilty_status, max_occupation) VALUES(?, ?, ?,?,?,?)", x)
      connector.commit()
      connector.close()
 
@@ -226,7 +226,7 @@ services = [
      [4007,'Desk Operations','Handle reservation for',100],
      [4008,'Night Shift Desk Operations','Handle reservation for',100],
      [4009,'House service','perform house service for room',50],
-     [4010,'food & beverage service','perform food & beverage service to',60],
+     [4010,'food, & beverage service','perform' ,  'food, & beverage service to',60],
      [4011,'Maintenance Service','Perform Maintainance service to hotel',50],
      [4012,'Restaurant Management','Manage restaurant activities',0],
      [4013,'Security','Protect people and hotel utilites',50	],
@@ -238,6 +238,100 @@ services = [
      
 ]
 
-#insert_service(services)
+rooms = [
+     [101,	'Single',	'Normal',	16.5, 1,   2],
+     [102	,    'Single',	'Normal',	16.5, 1,	2],
+     [103,	'Single',	'Normal',	16.5, 1,	2],
+     [104,     'Single',	'Normal',	16.5, 1,	2],
+     [105,	'Single',	'Normal',	16.5, 1,	2],
+     [106,	'Single',	'Normal',	16.5, 1,	2],
+     [107,	'Single',	'Double Decker', 17, 1,	4],
+     [108,	'Single',	'Double Decker', 17, 1,	4],
+     [109,	'Single',	'Double Decker', 17, 1,	4],
+     [110,	'Single',	'Double Decker', 17, 1,	4],
+     [111,	'Single',	'Double Decker', 17, 1,	4],
+     [112,	'Single',	'Double Decker', 17, 1,	4],
+     [113,	'Bed Sitter',	'Normal',	 21.5, 1,	2],
+     [114,	'Bed Sitter',	'Normal',		21.5, 1,	2],
+     [115,	'Bed Sitter',	'Normal',		21.5, 1,	2],
+     [116,	'Bed Sitter',	'Normal',		21.5, 1,	2],
+     [117,	'Bed Sitter',	'Double Decker',		22, 1,	4],
+     [118,	'Bed Sitter',	'Double Decker',		22, 1,	4],
+     [119,	'Bed Sitter',	'Double Decker',		22, 1,	4],
+     [120,	'Bed Sitter',	'Double Decker',		22, 1,	4],
+     [121,	'Bed Sitter',	'Kingsize',		22.5, 1,	5],
+     [122,	'Bed Sitter',	'Kingsize',		22.5, 1,	5],
+     [123,	'Bed Sitter',	'Kingsize',		22.5, 1,	5],
+     [124,	'Bed Sitter',	'Kingsize',		22.5, 1,	5],
+     [125,	'One bedroom',	'Normal',		24.5, 1,	4],
+     [126,	'One bedroom',	'Normal',		24.5, 1,	4],
+     [127,	'One bedroom',	'Normal',		24.5, 1,	4],
+     [128,	'One bedroom',	'Normal',		24.5, 1,	4],
+     [129,	'One bedroom',	'Double Decker',		25, 1,	8],
+     [130,	'One bedroom',	'Double Decker',		25, 1,	8],
+     [131,	'One bedroom',	'Double Decker',		25, 1,	8],
+     [132,     'One bedroom',	'Double Decker',		25, 1,	8],
+     [133,	'One bedroom',	'Kingsize',		25.99, 1,	6],
+     [134,	'One bedroom',	'Kingsize',		25.99, 1,	6],
+     [135,	'One bedroom',	'Kingsize',		25.99, 1,	6],
+     [136,	'One bedroom',	'Kingsize',		25.99, 1,	6],
+     [137,	'Two Bedroom',	'Normal',		26, 1,	8],
+     [138,	'Two Bedroom',	'Normal',		26, 1,	8],
+     [139,	'Two Bedroom',	'Normal',		26, 1,	8],
+     [140,	'Two Bedroom',	'Normal',		26, 1,	8],
+     [141,	'Two Bedroom',	'Double Decker',		26.99, 1,	16],
+     [142,	'Two Bedroom',	'Double Decker',		26.99, 1,	16],
+     [143,	'Two Bedroom',	'Double Decker',		26.99, 1,	16],
+     [144,	'Two Bedroom',	'Double Decker',		26.99, 1,	16],
+     [145,	'Two Bedroom',	'Kingsize',		27.5, 1,	9],
+     [146,	'Two Bedroom',	'Kingsize',		27.5, 1,	9],
+     [147,	'Two Bedroom',	'Kingsize',		27.5, 1,	9],
+     [148,	'Two Bedroom',	'Kingsize',		27.5, 1,	9]
+     
+]
+
+food = [
+     [209,	'toast'	,  'food',	 'Breakfast','food offererd in restaurant',					50,	2.99],
+     [210,'pancake'	,  'food',	 'Breakfast',	'food offererd in restaurant',				40,	2.33],
+     [205,	'Coffee'	,  'food',	 'Breakfast','food offererd in restaurant',					100,	1.99],
+     [211,	'Tea'	,  'food',	 'Breakfast',	'food offererd in restaurant',				100,	2],
+     [207,	'Tea & Mandazi'	,  'food',	 'Breakfast',	'food offererd in restaurant',				30,	2.5],
+     [204,	'Toasted bread & Tea'	,  'food',	 'Breakfast','food offererd in restaurant',					25,	2.8],
+     [203,	'Tea & Sandwitch'	,  'food',	 'Breakfast','food offererd in restaurant',					50,	4.33],
+     [202,	'Porridge'	,  'food',	 'Breakfast',	'food offererd in restaurant',				40,	1.99],
+     [208,	'Chapati'	,  'food',	 'Breakfast',		'food offererd in restaurant',			100,	2.99],
+     [206,	'Tea & Cookies'	,  'food',	 'Breakfast',	'food offererd in restaurant',				15,	2.99],
+     [201,	'Scramble'	,  'food',	 'Breakfast','food offererd in restaurant',					20,	3.6],
+     [212,	'Brown cookies & Tea'	,  'food',	 'Breakfast',	'food offererd in restaurant',				50,	2.99	],							
+     [213,	'Beef & Rice'	,  'food',	 'Lunch',		'food offererd in restaurant',			20	,4.5],
+     [214,	'Rice, Njahi & Avocado'	,  'food',	 'Lunch',	'food offererd in restaurant',				25,	3.5],
+     [215,	'Rice & meat'	,  'food',	 'Lunch',		'food offererd in restaurant',			25,	4],
+     [216,	'Rice & Curry'	,  'food',	 'Lunch',		'food offererd in restaurant',			20,	4.2],
+     [217,	'Rice & Peas'	,  'food',	 'Lunch',		'food offererd in restaurant',			20,	4.5],
+     [219,	'Ugali, Greens & Eggs'	,  'food',	 'Lunch',	'food offererd in restaurant',				20,	4.6],
+     [220,	'Ugali, meat & Cabbage'	,  'food',	 'Lunch',	'food offererd in restaurant',				20,	4.5],
+     [221,	'Githeri & Avocado'	,  'food',	 'Lunch',	'food offererd in restaurant',				80,	3.7],
+     [222,	'Beef Pilau'	,  'food',	 'Lunch',		'food offererd in restaurant',			30,	4.2],
+     [223,	'Ugali, Greens & Fish'	,  'food',	 'Lunch',	'food offererd in restaurant',				40,	5.09],
+     [224,	'Stew'	,  'food',	 'Lunch',		'food offererd in restaurant',			35,	4.3],
+     [218,	'Chapati & Beef'	,  'food',	 'Lunch',	'food offererd in restaurant',				70,	4.5],								
+     [225,	'Burger'	,  'food',	 'Dinner',		'food offererd in restaurant',			20,	3.44],
+     [226,	'Chapati, meat & Greens'	,  'food',	 'Dinner','food offererd in restaurant',					40,	5.3],
+     [227,	'Beef & Salad'	,  'food',	 'Dinner',	'food offererd in restaurant',				35,	4.6],
+     [228,	'Mokimo & meat'	,  'food',	 'Dinner','food offererd in restaurant',					30,	4],
+     [229,	'Githeri & Meat'	,  'food',	 'Dinner',	'food offererd in restaurant',				20,	4],
+     [230,	'Chapati & meat'	,  'food',	 'Dinner',	'food offererd in restaurant',				34,	4.2],
+     [231,	'Ugali & Meat'	,  'food',	 'Dinner',		'food offererd in restaurant',			32,	4.5],
+     [232,	'Rice'	,  'food',	 'Dinner',			'food offererd in restaurant',		32,	3.99],
+     [233,	'Ugali, Greens & meat'	,  'food',	 'Dinner','food offererd in restaurant',					20,	4.99],
+     [234,	'Meat'	,  'food',	 'Dinner',			'food offererd in restaurant',		21,	4],
+     [235,	'Chips & Chicken'	,  'food',	 'Dinner',	'food offererd in restaurant',				12,	5],
+     [236,	'Ugali, Meat & Greens'	,  'food',	 'Dinner',	'food offererd in restaurant',				15,	4.99]
+
+]
+
+insert_invent(food)
 #Create_tables()
 #insert_staff(data)
+#insert_Room(rooms)
+#insert_service(services)

@@ -1,106 +1,294 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{client.first_name}}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        .section {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #fff;
-        }
-
-        .section h3 {
-            margin-top: 0;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
+    <title>{{client.first_name}} {{client.last_name}}</title>
+    <link rel="stylesheet" href="{% static 'client.css' %}">
 </head>
+
 <body>
-    <div class="container">
-        <h2>Welcome, <span id="client-name">{{client.first_name}}</span></h2>
-        
-        <div class="section">
-            <h3>Client Information</h3>
-            <p><strong>Name:</strong> <span id="client-fullname">{{client.first_name}} {{client.last_name}}</span></p>
-            <p><strong>Contact:</strong> <span id="client-contact">{{client.contact}}</span></p>
-            <p><strong>Email:</strong> <span id="client-email">{{client.email}}</span></p>
-            <p><strong>Gender:</strong> <span id="client-gender">{{client.gender}}</span></p>
-            <p><strong>ID Number:</strong> <span id="client-id">{{client.id_no}}</span></p>
-            <p><strong>code</strong> <span id="client-id">{{client.code}}</span></p>
-        </div>
-        
-        <div class="section">
-            <h3>Book a Room</h3>
-            <form>
-                <label for="room-type">Room Type:</label>
-                <select id="room-type" required>
-                    <option value="single">Single</option>
-                    <option value="double">Double</option>
-                    <option value="suite">Suite</option>
-                </select>
-                <label for="check-in">Check-in Date:</label>
-                <input type="date" id="check-in" required>
-                <label for="check-out">Check-out Date:</label>
-                <input type="date" id="check-out" required>
-                <button type="submit">Book Now</button>
-            </form>
-        </div>
-        
-        <div class="section">
-            <h3>Order Food</h3>
-            <form>
-                <label for="food">Select Food Item:</label>
-                <select id="food" required>
-                    <option value="pizza">Pizza</option>
-                    <option value="burger">Burger</option>
-                    <option value="pasta">Pasta</option>
-                    <option value="salad">Salad</option>
-                </select>
-                <button type="submit">Order Now</button>
-            </form>
-        </div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo"><a href="{% url 'index' %}">haven<span>hub</span></a></div>
+        <ul>
+
+            <li><a href="#meals" >Meals</a></li>
+            <li><a href="#rooms" >Rooms</a></li>
+            <li><a href="#about-us">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <button id="mypin" onclick="showAlert('{{client.code}}')">get Pin</button>
+        </ul>
+    </nav>
+    <div class="content">
+        <h1 id="hotelname">welcome back <strong>{{client.first_name}}</strong> </h1>
+        <p class="description">At Haven <span>hub</span> ,we believe that every stay should be seamless <br>,comfortable and tailored to your needs. <br>Whether you are booking a cozy room foe relaxing getaway <br> or resrving a delicious meal ,we make the process <br> simple and stress free.Explore our options <br>customize your experience an dlet us take care of the rest. <br>Your perfect stay starts here  </p>
     </div>
+
+    <!-- Meals Section -->
+    <section id="meals">
+        <h2>Meals section</h2>
+        <div class="category">
+            <h3>Breakfast</h3>
+            <div class="meal-grid">
+                <!-- Breakfast images (10 images) -->
+                {% for food in foods %}
+                {%if food.service_time == 'Breakfast'%}
+                    <div class="meal">
+                        <img src="{% static 'images/'%}{{food.inventory_id}}.jpeg" alt="{{food.category}}: {{food.inventory_id}}">
+                        <p>Was:<del>$10.00</del></p>
+                        <p> Now:${{food.price_per_unit}}</p>
+                        <button class="book-button" onclick="bookRoom('{{client.client_id}}','{{food.inventory_id}}','{{food.price_per_unit}}', '4010')">Buy Now</button>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                <!-- Repeat for remaining meals (up to 10) -->
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>Lunch</h3>
+            <div class="meal-grid">
+                <!-- Lunch images (10 images) -->
+                {% for food in foods %}
+                {%if food.service_time == 'Lunch'%}
+                <div class="meal">
+                    <img src="{% static 'images/'%}{{food.inventory_id}}.jpeg" alt="{{food.category}}: {{food.inventory_id}}">
+                    <p>Was:<del>$10.00</del></p>
+                    <p> Now:${{food.price_per_unit}}</p>
+                    <button class="book-button" onclick="bookRoom('{{client.client_id}}','{{food.inventory_id}}','{{food.price_per_unit}}', '4010')">Buy Now</button>
+                </div>
+                {% endif %}
+                {% endfor %}
+                
+
+                <!-- Repeat for remaining meals (up to 10) -->
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>Dinner</h3>
+            <div class="meal-grid">
+                <!-- Dinner images (10 images) -->
+                {% for food in foods %}
+                    {%if food.service_time == 'Dinner'%}
+                        <div class="meal">
+                            <img src="{% static 'images/'%}{{food.inventory_id}}.jpeg" alt="{{food.category}}: {{food.inventory_id}}">
+                            <p>Was:<del>$10.00</del></p>
+                            <p> Now:${{food.price_per_unit}}</p>
+                            <button class="book-button" onclick="bookRoom('{{client.client_id}}','{{food.inventory_id}}','{{food.price_per_unit}}', '4010')">Buy Now</button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Repeat for remaining meals (up to 10) -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Rooms Section -->
+    <section id="rooms">
+        <h2>Rooms section</h2>
+        <div class="category">
+            <h3>Single Rooms</h3>
+            <div class="room-grid">
+                <!-- Single rooms images (10 images) -->
+                 {% for room in rooms %}
+                    {%if room.room_type == 'Single' and room.availabilty_status == 1%}
+                        <div class="room">```  
+                            <img src="{% static 'images/'%}{{room.room_id}}.jpeg" alt="{{room.room_type}} {{room.room_id}}">
+                            <p>Was:<del>$20.00</del></p>
+                            <p> Now:${{room.price_per_night}}</p>
+                            <button class="book-button" onclick="bookRoom('{{client.client_id}}', '{{room.room_id}}','{{room.price_per_night}}', '4007')">Book Now</button>
+                        </div>
+                    {%endif%}
+                {% endfor %}
+                
+
+                <!-- Repeat for remaining rooms (up to 10) -->
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>Bedsitters</h3>
+            <div class="room-grid">
+                <!-- Bedsitter images (10 images) -->
+                {% for room in rooms %}
+                    {%if room.room_type == 'Bed Sitter' and room.availabilty_status == 1%}
+                        <div class="room">
+                            <img src="{% static 'images/'%}{{room.room_id}}.jpeg" alt="{{room.room_type}} {{room.room_id}}">
+                            <p>Was:<del>$25.00</del></p>
+                            <p> Now:${{room.price_per_night}}</p>
+                            <button class="book-button" onclick="bookRoom('{{client.client_id}}', '{{room.room_id}}','{{room.price_per_night}}', '4007')">Book Now</button>
+                        </div>
+                    {%endif%}
+                {% endfor %}
+                
+                <!-- Repeat for remaining rooms (up to 10) -->
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>One Bedroom</h3>
+            <div class="room-grid">
+                <!-- One Bedroom images (10 images) -->
+                {% for room in rooms %}
+                    {%if room.room_type == 'One bedroom' and room.availabilty_status == 1%}
+                        <div class="room">
+                            <img src="{% static 'images/'%}{{room.room_id}}.jpeg"alt="{{room.room_type}} {{room.room_id}}">
+                            <p>Was:<del>$28.00</del></p>
+                            <p> Now:{{room.price_per_night}}</p>
+                            <button class="book-button" onclick="bookRoom('{{client.client_id}}', '{{room.room_id}}','{{room.price_per_night}}', '4007')">Book Now</button>
+                        </div>
+                    {%endif%}
+                {% endfor %}
+                
+                <!-- Repeat for remaining rooms (up to 10) -->
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>Two Bedrooms</h3>
+            <div class="room-grid">
+                <!-- Two Bedroom images (10 images) -->
+                {% for room in rooms %}
+                    {%if room.room_type == 'Two Bedroom' and room.availabilty_status == 1 %}
+                        <div class="room">
+                            <img src="{% static 'images/'%}{{room.room_id}}.jpeg" alt="{{room.room_type}} {{room.room_id}}">
+                            <p>Was:<del>$30.00</del></p>
+                            <p> Now:${{room.price_per_night}}</p>
+                            <button class="book-button" onclick="bookRoom('{{client.client_id}}', '{{room.room_id}}','{{room.price_per_night}}', '4007')">Book Now</button>
+                        </div>
+                    {%endif%}
+                {% endfor %}
+                
+                
+              
+                <!-- Repeat for remaining rooms (up to 10) -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about-us">
+        <h2>About Us</h2>
+        <p>We are a hospitality company that offers a variety of delicious meals and comfortable rooms. <br> Our mission is to provide excellent service to all our clients, ensuring that they have a memorable experience.</p>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>Get in touch with us through the following <br> social media plattforms</p>
+        <div class="social-links">
+            <a href="https://facebook.com" target="_blank"><i id="facebook" class="fa-brands fa-facebook"></i> </a>
+            <a href="https://whatsapp.com" target="_blank"> <i id="whatsapp" class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://instagram.com" target="_blank"> <i id="instagram" class="fa-brands fa-instagram"></i></a>
+            <a href="https://tiktok.com" target="_blank"> <i id="tiktok" class="fa-brands fa-tiktok"></i></a>
+            <a href="https://linkedin.com" target="_blank"><i id="linkedin" class="fa-brands fa-linkedin"></i> </a>
+        </div>
+        <div class="quick-links">
+            <h1><strong>Quick Links</strong></h1> <br>
+            <a href="#meals">Meals</a target="_blank">
+            <a href="#rooms">Rooms</a target="_blank">
+            <a href="#aboutus">About Us</a target="_blank">
+            <a href="#contact">contact</a target="_blank">
+        </div>
+        <hr>
+        <div class="footer-bottom">
+            <p style="color: rgb(44, 55, 156); font-size:20px; ">&copy; 2025 <br> Haven Hub Hotels. <br> All rights reserved.</p>
+            
+        </div>
+    </section>
+      <!-- Popup to enter days and show payment -->
+      <div id="payment-popup" class="popup">
+        <div class="popup-content">
+          <h3>Enter Number of Days or Quantity</h3>
+        
+          <input type="number" id="days" placeholder="Enter number of days or Quantity" min="1">
+          
+          <button onclick="calculatePayment()">Calculate Payment</button>
+  
+          <div id="payment-summary" class="payment-summary"></div>
+  
+          <div id="payment-methods" class="payment-methods" style="display: none;">
+             
+            <button class="payment-method" onclick="choosePaymentMethod('Mpesa')">Mpesa</button>
+            <button class="payment-method" onclick="choosePaymentMethod('Bank Transfer')">Bank Transfer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+         // Show popup to book the room
+         function bookRoom(client_id, id_no ,price, service) {
+            selectedRoomPrice = price;
+            selectedRoomid = id_no;
+            selectedclient = client_id;
+            selectedservice = service;
+            document.getElementById('payment-popup').style.display = 'flex';
+
+          }
+      
+          // Calculate payment based on the number of days
+          function calculatePayment() {
+            const days = document.getElementById('days').value;
+            total_days = days
+            if (  days && days > 0) {
+              const total = selectedRoomPrice * days;
+              totalprice = total
+              document.getElementById('payment-summary').innerHTML = `Total Payment: $${total}`;
+              document.getElementById('payment-methods').style.display = 'flex';
+            } else {
+              alert('Please enter a valid number of days .');
+            }
+          }
+          
+      
+          // Choose payment method (Mpesa or Bank Transfer)
+          function choosePaymentMethod(method) {
+            alert(`You have chosen ${method} as your payment method and your payment was successful.`);
+            document.getElementById('payment-popup').style.display = 'none';
+            paymentmethod = method;
+            sendData();
+            window.location.reload()
+          }
+
+
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                let cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function sendData() {
+            let myData = {'user_id' : selectedclient, 'id' : selectedRoomid, 'price' : totalprice, 'payment' : paymentmethod, 'service' : selectedservice, 'days' : total_days};
+            fetch('/api/process-data/', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")  // ✅ Include CSRF token
+                },
+                body: JSON.stringify(myData)
+            }).catch(error => console.error("Error:", error));  // Ignore response
+        }
+
+        function showAlert(number) {
+            alert("Please remember this PIN " + number);
+        }
+        
+    </script>
 </body>
+
 </html>

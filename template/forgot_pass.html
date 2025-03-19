@@ -20,6 +20,15 @@
       justify-content: center;
       min-height: 100vh;
       padding: 1rem;
+
+
+      background-image:url( https://images.unsplash.com/photo-1517840901100-8179e982acb7?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG90ZWx8ZW58MHx8MHx8fDA%3D) ;
+      background-attachment: fixed;
+      background-position: center;
+      overflow:hidden;
+    /*filter: blur(0.3px);*/
+      background-repeat: no-repeat;
+      background-size: cover;
     }
     
     .container {
@@ -197,10 +206,10 @@
             type="text"
             name="code" 
             inputmode="numeric" 
-            placeholder="Enter 4-digit code" 
+            placeholder="Enter 4-digit code or ID number" 
             required
           >
-          <p class="hint">Enter the 4-digit code sent to your email</p>
+          <p class="hint">Enter the code/ID sent to your email</p>
         </div>
         
         <div class="form-group">
@@ -267,10 +276,10 @@
         const value = e.target.value.replace(/\D/g, '');
         
         // Limit to 4 digits
-        if (value.length <= 4) {
+        if (value.length <= 20) {
           e.target.value = value;
         } else {
-          e.target.value = value.slice(0, 4);
+          e.target.value = value.slice(0, 20);
         }
       });
       

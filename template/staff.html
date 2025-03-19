@@ -4,83 +4,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>staff_{{staff.staff_id}}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        .section {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #fff;
-        }
-
-        .section h3 {
-            margin-top: 0;
-        }
-
-        .service-requests {
-            list-style: none;
-            padding: 0;
-        }
-
-        .service-requests li {
-            background: #e9ecef;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Staff Profile - Hotel Management System</title>
+    <link rel="stylesheet" href="{% static 'staff.css' %}">
 </head>
 <body>
+    <div class="header">Staff Profile <br> <span style="font-size:16px; font-weight:normal;">Hotel Management System</span></div>
+
     <div class="container">
-        <h2>Staff Details</h2>
-        
         <div class="section">
-            <h3>Personal Information</h3>
-            <p><strong>First Name:</strong> <span id="staff-firstname">{{staff.first_name}}</span></p>
-            <p><strong>Last Name:</strong> <span id="staff-lastname">{{staff.last_name}}</span></p>
-            <p><strong>Contact:</strong> <span id="staff-contact">+254 {{staff.contact}}</span></p>
-            <p><strong>Email:</strong> <span id="staff-email">{{staff.email}}</span></p>
-            <p><strong>ID Number:</strong> <span id="staff-id">{{staff.id_no}}</span></p>
-            <p><strong>Gender:</strong> <span id="staff-gender">{{staff.gender}}</span></p>
+            <h3>Personal Details</h3>
+            <div class="details">
+                <div>
+                    <label for="firstName">First Name:</label>
+                    <p>{{staff.first_name}}</p>
+                </div>
+                <div>
+                    <label for="lastName">Last Name:</label>
+                <p>{{staff.last_name}}</p>
+                </div>
+                <div>
+                    <label for="gender">Gender</label>
+                   <p>{{staff.gender}}</p>
+                </div>
+                <div>
+                    <label for="contact">Contact Number:</label>
+                  <p>+254 {{staff.contact}}</p>
+                </div>
+                <div>
+                    <label for="idNumber">ID Number:</label>
+                    <p>{{staff.id_no}}</p>
+                </div>
+                <div>
+                    <label for="Joining Date">Joining Date:</label>
+                   <p>{{staff.date_of_joining}}</p>
+                </div>
+                <div style="width: 100%;">
+                    <label for="email">Email:</label>
+                  <p>{{staff.email}}</p>
+                </div>
+            </div>
         </div>
-        
+        <div class="unique-code">
+            <h3>Your Unique Code</h3>
+            <p id="unique-code">{{staff.code}}</p>
+            <div class="important-note">Please remember this code! It will be used for all your future bookings and services.</div>
+        </div>
+
         <div class="section">
             <h3>Job Details</h3>
-            <p><strong>Role:</strong> <span id="staff-role">{{staff.role}}</span></p>
-            <p><strong>Salary:</strong> <span id="staff-salary">Ksh {{staff.salary}}</span></p>
-            <p><strong>Day of Joining:</strong> <span id="staff-joining">{{staff.date_of_joining}}</span></p>
-            <p><strong>Shift Start:</strong> <span id="staff-shift-start">{{staff.shift_start}}</span></p>
-            <p><strong>Shift End:</strong> <span id="staff-shift-end">{{staff.shift_end}}</span></p>
+            <div class="details">
+                <div>
+                    <label for="Role">Role:</label>
+                   <p>{{staff.role}}</p>
+                </div>
+                <div>
+                    <label for="Salary">Salary:</label>
+                    <p>Ksh {{staff.salary}}</p>
+                </div>
+               
+                <div>
+                    <label for="shiftstart">Shift Start:</label>
+                   <p>{{staff.shift_start}}</p>
+                </div>
+                <div>
+                    <label for="Shiftend">Shift End:</label>
+                    <p>{{staff.shift_end}}</p>
+                </div>
+               
         </div>
-        
+
         <div class="section">
             <h3>Service Requests</h3>
-            {% for service in services %}
-            <div class="service">
-                <p>{{service.service_description}} </p>
-            </div>
-            {% endfor %}
+            <div class="details">
+                <ul>
+                    {% for service in services %}
+                        {% if service.service_status == 'pending' %}
+                            <li class="request-item">
+                                <div class="request-details">
+                                    <div class="request-title">Request {{service.request_id}}:       </div>
+                                    <div class="request-meta">{{service.service}}         </div>
+                                </div>
+                                <button class="request-status status-pending">{{service.service_status}}</button>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+        </div>     
         </div>
     </div>
 </body>

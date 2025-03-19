@@ -154,49 +154,115 @@ class Account:
             return True
         return False
 
-    def Forgot_Password(self, code, new_pass):
-        if str(code)[0] == "1":
-            data=Staff.objects.filter(code=code)
-            print(list(data))
-            data.update(password=new_pass)
-        else:
-            data=Client.objects.filter(code=code)
-            print(list(data))
-            data.update(password=new_pass)
+    def client_data(self):
+        client = list(Client.objects.filter(client_id=self.user).values())[0]
+        rooms = list(Room.objects.values())
+        foods = list(Inventory.objects.values())
+        self.Reset()
 
-    def Book_room(self, client_id, room_id, check_in_date, check_out_date, no_guest, price):
+        return {'client': client, 'rooms':rooms, 'foods':foods}
+
+    def Forgot_Password(self, code, new_pass):
+        code = int(code)
+
+        if Staff.objects.filter(code=code).exists() or Staff.objects.filter(id_no=code).exists():
+
+            if Staff.objects.filter(code=code).exists():
+                data=Staff.objects.filter(code=code) 
+                data.update(password=new_pass)
+            else:
+                data=Staff.objects.filter(id_no=code) 
+                data.update(password=new_pass)
+
+        elif Client.objects.filter(code=code).exists() or Client.objects.filter(id_no=code).exists():
+
+            if Client.objects.filter(code=code).exists():
+                data=Client.objects.filter(code=code)
+                data.update(password=new_pass)
+                print('worked')
+            else:
+                data=Client.objects.filter(id_no=code)
+                data.update(password=new_pass)
+
+    def Book_room(self, client_id, room_id, check_in_date, check_out_date, price, no_guest=1):
         length = len(list(Booking.objects.values()))
         booking_id = 2133 + length
         check_in_date = dt.datetime.strptime(check_in_date, '%Y-%m-%d')
         check_out_date = dt.datetime.strptime(check_out_date, '%Y-%m-%d')
-        book = Booking(booking_id=booking_id, client_id=client_id, room_id=room_id, check_in_date=check_in_date, check_out_date=check_out_date, number_of_guests=no_guest, total_price=price)
+
+        book = Booking(booking_id=booking_id, client_id=client_id, room_id=room_id, check_in_date=check_in_date, check_out_date=check_out_date, number_of_guests=no_guest, total_price=price, booking_status='active')
+        
         book.save()
-        Room.objects.filter(room_id=room_id).update(availability_status=1)
+        Room.objects.filter(room_id=room_id).update(availabilty_status=0)
+
+        self.Book_service(4007, booking_id)
+        self.Reset()
+
+        return booking_id
 
     def Reset(self):
         current_date = dt.date.today()
-        book=Booking.objects.filter(check_out_date__lte=current_date)
-        rooms = []
-        for room in list(book):
-            Room.objects.filter(room_id=room.room_id).update(availability_status=0)
-
+        book = Booking.objects.filter(check_out_date__lte=current_date)
         book.update(booking_status='complete')
 
-    def Book_service(self, service_id, booking_id = None, request_date=dt.date.today()):
+        rooms = list(Booking.objects.values())
+
+        for room in rooms:
+            result = True
+            if Booking.objects.filter(room_id = room['room_id']).exists():
+                values = list(Booking.objects.filter(room_id = room['room_id']).values())
+                for value in values:
+                    if value['booking_status'] == 'pending' or value['booking_status'] == 'active':
+                        result = False
+            
+            elif list(Room.objects.filter(room_id = room['room_id']).values())[0]['availabilty_status'] == 0:
+                result == False
+
+            if result:
+                Room.objects.filter(room_id = room['room_id']).update(availabilty_status = 1)
+
+        
+
+    def Book_service(self, service_id, booking_id = None, request_date=str(dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))):
         length = len(list(ServiceRequest.objects.values()))
         request_id = 5003 + length
-        service = ServiceRequest(request_id=request_id, booking_id=booking_id, request_date=request_date)
+        service = ServiceRequest(request_id=request_id, booking_id=booking_id, service_id=service_id, request_date=request_date, request_status='pending')
         service.save()
 
     def Staff_data(self):
         staff:dict = list(Staff.objects.filter(staff_id=self.user).values())[0]
         service_id = staff['service_id']
 
-        services:dict = list(ServiceRequest.objects.filter(service_id=service_id).values())
-        if len(services) != 0:
+        services = list(ServiceRequest.objects.filter(service_id=service_id).values())
+        temp = []
+        if len(services) > 0:
             for service in services:
-                additions:dict = list(ServiceRequest.objects.filter(service_id=service_id))[0]
-                service.update(additions) 
+                d = {}
+                d['request_id'] = service['request_id']
+                d['service_id'] = service_id
+                serve:dict = list(Service.objects.filter(service_id = service_id).values())[0]
+                d['service'] = serve['service_name']
+                d['service_status'] = service['request_status']
+                print(d)
+                temp.append(d)
+                
+        services = temp.copy()
+       
 
-        print(services)
-        return {'staff':staff, 'service':services}
+        return {'staff':staff, 'services':services}
+
+    def Payment(self, client_id, amount, payment_mode, payment_time = dt.datetime.now().strftime('%H:%M:%S'), payment_date = dt.datetime.now().strftime('%Y-%m-%d'), service_id = None, booking_id = None):
+        length = len(list(Payment.objects.values()))
+        payment_id = 6300 + length
+
+        account = list(Client.objects.filter(client_id = client_id).values())[0]['contact']
+        payment_status = 'paid'
+        
+        if payment_mode == 'Bank Transfer':
+            payment_mode = 'Bank'
+
+        else:
+            payment_mode = 'M-pesa'
+
+        data = Payment(payment_id=payment_id, booking_id=booking_id, service_id=service_id, amount=amount, payment_time=payment_time, payment_date=payment_date, payment_mode=payment_mode, account=account, payment_status=payment_status)
+        data.save()
