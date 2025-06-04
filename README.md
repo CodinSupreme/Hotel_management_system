@@ -1,6 +1,7 @@
 # HOTEL MANAGEMENT SYSTEM
 # Virtual Environment
 If you want to access or run the python code use the virtual environment.
+or you can double click on the Run.bat file to run the program
 
 # Steps to activate virtual environment
 1) Open command prompt
