@@ -1,4 +1,13 @@
 # HOTEL MANAGEMENT SYSTEM
+# REQUIREMENTS
+* Python 3
+* Python-django
+* Python-sqlite3
+
+# HOW TO RUN THE PROGRAM
+* Double click on the Run.bat file then copy the url and paste it to your browser.
+* Alternatively perform the process below.
+  
 # Virtual Environment
 If you want to access or run the python code use the virtual environment.
 or you can double click on the Run.bat file to run the program
